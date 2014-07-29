@@ -201,7 +201,14 @@ module KeenCli
         data = File.read(options[:file])
         csv = CSV.new(data, :headers => true, :header_converters => :symbol, :converters => :all)
         events = csv.to_a.map {|row| row.to_hash }
+        events.each_with_index do |event, index|
+          events[index][:keen] = {}
+          event.each do |k,v|
+            events[index][:keen][:timestamp] = events[index].delete(:keentimestamp) if k == :keentimestamp
 
+          end
+        end
+        puts events.inspect
       else
 
         if $stdin.tty?
