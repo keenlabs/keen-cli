@@ -203,12 +203,8 @@ module KeenCli
         events = csv.to_a.map {|row| row.to_hash }
         events.each_with_index do |event, index|
           events[index][:keen] = {}
-          event.each do |k,v|
-            events[index][:keen][:timestamp] = events[index].delete(:keentimestamp) if k == :keentimestamp
-
-          end
+          events[index][:keen][:timestamp] = events[index].delete(:keentimestamp) if event.has_key?(:keentimestamp)
         end
-        puts events.inspect
       else
 
         if $stdin.tty?
