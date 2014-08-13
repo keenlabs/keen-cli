@@ -11,6 +11,8 @@ require 'keen-cli/projects'
 require 'keen-cli/events'
 require 'keen-cli/queries'
 
+require 'keen-cli/plugins'
+
 module KeenCli
 
   class CLI < Thor
