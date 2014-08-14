@@ -38,6 +38,26 @@ module KeenCli
       end
     end
     
+    # browse for installed plugins
+	  begin
+	    name = nil  # plugin name
+	    plugins = Gem::Specification.select{ |g| g.name.downcase.include? "keen-cli-"} # keen-cli- prefix is used for plugins
+	    plugins.each {|plugin|
+	      name = plugin.name.gsub(/keen-cli-/,'')
+	      
+	      # load the plugin gem
+	      require "keen-cli-#{name}"
+	      command = Object.const_get("KeenCli::" << name.capitalize)
+	      
+	      # attach subcommand
+  	    desc name, "Manage the #{name} plugin"
+  	    subcommand name, command
+	    }
+    rescue LoadError	    
+      # gem isn't installed
+      puts "Could not find plugin \"#{name}\""
+	  end
+    
   end
 
 end
