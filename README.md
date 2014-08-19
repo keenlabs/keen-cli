@@ -162,7 +162,7 @@ Parameters:
 
 + `--collection`, `-c`: – The collection to query against. Can also be set on the environment via `KEEN_COLLECTION_NAME`.
 + `--analysis-type`, `-a`: The analysis type for the query. Only needed when not using a query command alias.
-+ `--group-by`, `-g`: A group by for the query.
++ `--group-by`, `-g`: A group by for the query. Multiple fields seperated by comma are supported.
 + `--target-property`, `-y`: A target property for the query.
 + `--timeframe`, `-t`: A relative timeframe, e.g. `last_60_minutes`.
 + `--start`, `-s`: The start time of an absolute timeframe.
@@ -173,6 +173,7 @@ Parameters:
 + `--property-names`: A comma-separated list of property names. Extractions only.
 + `--latest`: Number of latest events to retrieve. Extractions only.
 + `--email`: Send extraction results via email, asynchronously. Extractions only.
++ `--spark`: Format output for [spark](https://github.com/holman/spark) ▁▂▃▅▇. Interval and timeframe fields required. Set this flag and pipe output to `spark` to visualize output.
 
 Input source parameters:
 + `--data`, `-d`: Specify query parameters as JSON instead of query params.
@@ -266,6 +267,8 @@ Parameters that apply to most commands include:
 
 ### Changelog
 
++ 0.2.0 - Add support for [spark](https://github.com/holman/spark) ▁▂▃▅▇
++ 0.1.9 - Supports JSON-encoded filters and comma-seperated multiple group by
 + 0.1.8 - Inputted lines can also be arrays of JSON objects. `--batch-size` param is now properly recognized.
 + 0.1.7 - Add docs command
 + 0.1.6 - Big refactoring to make importing events much cleaner and batching happen automatically. Also adds `queries:url`.

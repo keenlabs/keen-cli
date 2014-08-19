@@ -23,9 +23,24 @@ describe KeenCli::CLI do
     end
 
     it 'converts dashes to underscores for certain properties' do
-      url = "https://api.keen.io/3.0/projects/#{project_id}/queries/count?event_collection=minecraft-deaths&group_by=foo&target_property=bar"
+      url = "https://api.keen.io/3.0/projects/#{project_id}/queries/count?event_collection=minecraft-deaths&group_by=%5B%22foo%22%5D&target_property=bar"
       stub_request(:get, url).to_return(:body => { :result => 10 }.to_json)
       _, options = start 'queries:run --analysis-type count --collection minecraft-deaths --group-by foo --target-property bar'
+      expect(_).to eq(10)
+    end
+
+    it 'allows comma-delimited group by fields' do
+      url = "https://api.keen.io/3.0/projects/#{project_id}/queries/count?event_collection=minecraft-deaths&group_by=%5B%22%5C%22foo%22,%22bar%5C%22%22%5D&target_property=bar"
+      stub_request(:get, url).to_return(:body => { :result => 10 }.to_json)
+      _, options = start 'queries:run --analysis-type count --collection minecraft-deaths --group-by "foo,bar" --target-property bar'
+      expect(_).to eq(10)
+    end
+
+    it 'parses filters as JSON' do
+      url = "https://api.keen.io/3.0/projects/#{project_id}/queries/count?event_collection=minecraft-deaths&filters=%5B%7B%22property_name%22%3A%22enemy%22%2C%22operator%22%3A%22eq%22%2C%22property_value%22%3A%22creeper%22%7D%5D"
+      stub_request(:get, url).to_return(:body => { :result => 10 }.to_json)
+      filters = '[{"property_name":"enemy","operator":"eq","property_value":"creeper"}]'
+      _, options = start "queries:run --analysis-type count --collection minecraft-deaths --filters #{filters}"
       expect(_).to eq(10)
     end
 
@@ -85,6 +100,17 @@ describe KeenCli::CLI do
       url = "https://api.keen.io/3.0/projects/#{project_id}/queries/count?event_collection=minecraft-deaths"
       _, options = start 'queries:url --analysis-type count --collection minecraft-deaths --exclude-api-key'
       expect(_).to eq(url)
+    end
+
+  end
+
+  describe 'spark format' do
+
+    it 'should emit interval results as numbers' do
+      url = "https://api.keen.io/3.0/projects/#{project_id}/queries/count?event_collection=minecraft-deaths&timeframe=last_2_minutes&interval=minutely"
+      stub_request(:get, url).to_return(:body => { :result => [{ value: 10 }, { value: 20 }] }.to_json)
+      _ = start 'queries:run --collection minecraft-deaths --analysis-type count --timeframe last_2_minutes --interval minutely --spark'
+      expect(_).to eq("10 20")
     end
 
   end
